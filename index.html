@@ -29,7 +29,7 @@ header {
   display: inline-block;
 }
 header img {
-  width: 100px;
+  width: 120px;
   margin-bottom: 15px;
 }
 header h1 {
@@ -76,6 +76,7 @@ footer { text-align: center; padding: 25px; color: var(--muted); background: rgb
 .progress-bar { width: 100%; background: #1f2933; border-radius: 10px; overflow: hidden; height: 20px; }
 .progress { height: 100%; background: var(--accent); width: 0%; text-align: center; color: #020617; font-weight: bold; }
 .rank-icon { width: 20px; vertical-align: middle; margin-right: 5px; }
+.app-buttons button { margin-right: 5px; }
 </style>
 </head>
 <body>
@@ -126,17 +127,20 @@ footer { text-align: center; padding: 25px; color: var(--muted); background: rgb
 
 <div class="card admin-panel" id="adminPanel">
 <h2>⚙️ Admin Panel</h2>
+
 <h3>VTC Info</h3>
 <input id="editName" placeholder="VTC Name" />
 <input id="editDesc" placeholder="VTC Description" />
 <input id="editDiscord" placeholder="Discord Invite Link" />
 <button class="btn" onclick="saveVTC()">Save VTC Info</button>
 <hr />
+
 <h3>Add / Update Driver</h3>
 <input id="driverName" placeholder="Driver Name" />
 <input id="driverKm" type="number" placeholder="Distance (km)" />
 <button class="btn" onclick="addDriver()">Save Driver</button>
 <hr />
+
 <h3>Add / Update Job</h3>
 <input id="jobDriver" placeholder="Driver Name" />
 <input id="jobCargo" placeholder="Cargo" />
@@ -144,16 +148,19 @@ footer { text-align: center; padding: 25px; color: var(--muted); background: rgb
 <input id="jobProgress" type="number" placeholder="Progress (%)" />
 <button class="btn" onclick="addJob()">Save Job</button>
 <hr />
-<h3>Applications (copy to Discord)</h3>
-<pre id="applications"></pre>
+
+<h3>Applications</h3>
+<div id="applications"></div>
 </div>
 </main>
 <footer>© 2026 – Iron Viking Transport | TruckersMP</footer>
+
 <script>
 const ADMIN_CODE="Gonkabot1";
 const DISCORD_WEBHOOK="https://discord.com/api/webhooks/1457060077994246389/wQBvtcmuy5V-abrfkgx9IyF6WM44ZZzHipBZ-5ScnsqvmfQen379p3HEPngNbqqVqfUR";
 let drivers=JSON.parse(localStorage.getItem("drivers")||"[]");
 let jobs=JSON.parse(localStorage.getItem("jobs")||"[]");
+let applications=JSON.parse(localStorage.getItem("applications")||"[]");
 
 function renderLeaderboard(){
   drivers.sort((a,b)=>b.km-a.km);
@@ -180,25 +187,115 @@ function renderJobs(){
   localStorage.setItem("jobs",JSON.stringify(jobs));
 }
 
-function addJob(){
+function renderApplications(){
+  const container=document.getElementById("applications");
+  container.innerHTML="";
+  applications.forEach((app,index)=>{
+    const div=document.createElement("div");
+    div.style.marginBottom="10px";
+    div.innerHTML=`<pre>${app.text}</pre>
+      <div class="app-buttons">
+        <button onclick="acceptApplication(${index})" class="btn">Accept</button>
+        <button onclick="rejectApplication(${index})" class="btn">Reject</button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function acceptApplication(index){
+  const app=applications[index];
+  if(app){
+    drivers.push({name: app.name, km: 0});
+    applications.splice(index,1);
+    localStorage.setItem("drivers",JSON.stringify(drivers));
+    localStorage.setItem("applications",JSON.stringify(applications));
+    renderLeaderboard();
+    renderApplications();
+    alert(`Accepted ${app.name}`);
+  }
+}
+
+function rejectApplication(index){
+  const app=applications[index];
+  if(app){
+    applications.splice(index,1);
+    localStorage.setItem("applications",JSON.stringify(applications));
+    renderApplications();
+    alert(`Rejected ${app.name}`);
+  }
+}
+
+function login(){ 
+  const code=document.getElementById("adminCode").value; 
+  if(code===ADMIN_CODE){ 
+    document.getElementById("adminPanel").style.display="grid"; 
+    alert("Admin logged in"); 
+  } else alert("Wrong admin code"); 
+}
+
+function addDriver(){ 
+  const name=document.getElementById("driverName").value; 
+  const km=Number(document.getElementById("driverKm").value); 
+  if(!name||isNaN(km))return alert("Fill all fields"); 
+  const existing=drivers.find(d=>d.name===name); 
+  if(existing)existing.km=km; else drivers.push({name,km}); 
+  renderLeaderboard(); 
+}
+
+function addJob(){ 
   const driver=document.getElementById("jobDriver").value;
   const cargo=document.getElementById("jobCargo").value;
   const route=document.getElementById("jobRoute").value;
   const progress=Number(document.getElementById("jobProgress").value);
-  if(!driver||!cargo||!route||progress===undefined)return alert("Fill all fields");
+  if(!driver||!cargo||!route||isNaN(progress)) return alert("Fill all fields");
   const existing=jobs.find(j=>j.driver===driver && j.route===route);
   if(existing){existing.cargo=cargo; existing.progress=progress;}
   else jobs.push({driver,cargo,route,progress});
   renderJobs();
 }
 
-function login(){ const code=document.getElementById("adminCode").value; if(code===ADMIN_CODE){ document.getElementById("adminPanel").style.display="grid"; alert("Admin logged in"); } else alert("Wrong admin code"); }
-function addDriver(){ const name=document.getElementById("driverName").value; const km=Number(document.getElementById("driverKm").value); if(!name||!km)return alert("Fill all fields"); const existing=drivers.find(d=>d.name===name); if(existing)existing.km=km; else drivers.push({name,km}); renderLeaderboard(); }
-function saveVTC(){ const name=document.getElementById("editName").value; const desc=document.getElementById("editDesc").value; const discord=document.getElementById("editDiscord").value; if(name)localStorage.setItem("vtcName",name); if(desc)localStorage.setItem("vtcDesc",desc); if(discord)localStorage.setItem("vtcDiscord",discord); loadVTC(); alert("Saved"); }
-function loadVTC(){ document.getElementById("vtcName").innerText=localStorage.getItem("vtcName")||"Iron Viking Transport"; document.getElementById("vtcDesc").innerText=localStorage.getItem("vtcDesc")||"Professional Viking virtual trucking company"; const d=localStorage.getItem("vtcDiscord"); if(d)document.getElementById("discordLink").href=d; }
-async function submitApplication(){ const name=document.getElementById("appName").value; const age=document.getElementById("appAge").value; const exp=document.getElementById("appExperience").value; if(!name||!age||!exp)return alert("Fill all fields"); const appMessage=`**New VTC Application**\nName: ${name}\nAge: ${age}\nExperience: ${exp}`; try{ await fetch(DISCORD_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:appMessage})}); }catch(e){console.error('Discord webhook error',e);} const apps=JSON.parse(localStorage.getItem("applications")||"[]"); apps.push(appMessage+'\n---'); localStorage.setItem("applications",JSON.stringify(apps)); document.getElementById("appStatus").innerText="Application sent! Check Discord."; loadApplications(); }
-function loadApplications(){ const apps=JSON.parse(localStorage.getItem("applications")||"[]"); document.getElementById("applications").innerText=apps.join("\n"); }
-loadVTC(); renderLeaderboard(); renderJobs(); loadApplications();
+function saveVTC(){ 
+  const name=document.getElementById("editName").value; 
+  const desc=document.getElementById("editDesc").value; 
+  const discord=document.getElementById("editDiscord").value; 
+  if(name)localStorage.setItem("vtcName",name); 
+  if(desc)localStorage.setItem("vtcDesc",desc); 
+  if(discord)localStorage.setItem("vtcDiscord",discord); 
+  loadVTC(); 
+  alert("Saved"); 
+}
+
+function loadVTC(){ 
+  document.getElementById("vtcName").innerText=localStorage.getItem("vtcName")||"Iron Viking Transport"; 
+  document.getElementById("vtcDesc").innerText=localStorage.getItem("vtcDesc")||"Professional Viking virtual trucking company"; 
+  const d=localStorage.getItem("vtcDiscord"); 
+  if(d)document.getElementById("discordLink").href=d; 
+}
+
+async function submitApplication(){ 
+  const name=document.getElementById("appName").value; 
+  const age=document.getElementById("appAge").value; 
+  const exp=document.getElementById("appExperience").value; 
+  if(!name||!age||!exp)return alert("Fill all fields"); 
+  const text=`Name: ${name}\nAge: ${age}\nExperience: ${exp}`;
+  applications.push({name,text});
+  localStorage.setItem("applications",JSON.stringify(applications));
+  renderApplications();
+  document.getElementById("appStatus").innerText="Application sent! Check Discord.";
+  
+  try{ 
+    await fetch(DISCORD_WEBHOOK,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({content:`**New VTC Application**\n${text}`})
+    }); 
+  }catch(e){console.error('Discord webhook error',e);} 
+}
+
+loadVTC(); 
+renderLeaderboard(); 
+renderJobs(); 
+renderApplications();
 </script>
 </body>
 </html>
