@@ -4,314 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iron Viking Transport – TruckersMP</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #020617;
-  --card: rgba(2, 11, 28, 0.95);
-  --accent: #1e40af;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
+/* Fonts */
+body { font-family: 'Poppins', sans-serif; }
+
+/* HERO BACKGROUND */
+.hero-bg {
+  background: url('truck-background.jpg') center/cover no-repeat fixed;
+  position: relative;
+  overflow: hidden;
 }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: url('https://images.unsplash.com/photo-1605106702914-2df0b52b2c72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw5MTI3MXwwfDF8c2VhcmNofDF8fG1vdW50YWluJTIwc25vd3xlbnwwfHx8fDE2OTY4MTc2Mzk&ixlib=rb-4.0.3&q=80&w=1920') no-repeat center center/cover;
-  color: var(--text);
+
+/* DARK OVERLAY */
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
 }
-header {
-  padding: 80px 20px;
-  text-align: center;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  margin: 20px;
-  display: inline-block;
+
+/* GLASS CARD */
+.glass {
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(15px);
+  border-radius: 2rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-header img {
-  width: 120px;
-  margin-bottom: 15px;
+.glass:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 50px rgba(59,130,246,0.6);
+  border-color: #3b82f6;
 }
-header h1 {
-  font-size: 48px;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 8px #000;
-}
-header p {
-  color: var(--muted);
-  font-size: 18px;
-}
+
+/* BUTTONS */
 .btn {
-  background: var(--accent);
-  color: #020617;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  cursor: pointer;
+  background: linear-gradient(90deg,#3b82f6,#60a5fa);
+  color: black;
   font-weight: bold;
-  margin: 5px 0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 5px 20px rgba(59,130,246,0.5);
+  transition: all 0.3s ease;
 }
-main {
-  max-width: 1100px;
-  margin: auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 25px;
+.btn:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 0 15px 30px rgba(59,130,246,0.8);
 }
-.card {
-  background: var(--card);
-  border-radius: 25px;
-  padding: 25px;
-  box-shadow: 0 12px 35px rgba(0,0,0,.5);
-  backdrop-filter: blur(5px);
+
+/* LEADERBOARD TOP 3 */
+.leader-1 { background: gold; color: black; font-weight: bold; }
+.leader-2 { background: silver; color: black; font-weight: bold; }
+.leader-3 { background: #cd7f32; color: black; font-weight: bold; }
+
+/* PROGRESS BAR */
+.progress-bg {
+  background: rgba(255,255,255,0.2);
+  border-radius: 9999px;
+  height: 1.5rem;
+  overflow: hidden;
 }
-h2 { margin-top: 0; text-align: center; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 12px; border-bottom: 1px solid #1f2933; text-align: left; }
-th { color: var(--accent); }
-.admin-panel { display: none; gap: 12px; }
-input { padding: 10px; border-radius: 10px; border: none; width: 100%; margin-bottom: 10px; }
-footer { text-align: center; padding: 25px; color: var(--muted); background: rgba(0,0,0,0.6); }
-.progress-bar { width: 100%; background: #1f2933; border-radius: 10px; overflow: hidden; height: 20px; }
-.progress { height: 100%; background: var(--accent); width: 0%; text-align: center; color: #020617; font-weight: bold; }
-.rank-icon { width: 20px; vertical-align: middle; margin-right: 5px; }
-.app-buttons button { margin-right: 5px; }
+.progress-fill {
+  height: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: black;
+  line-height: 1.5rem;
+  background: linear-gradient(90deg,#3b82f6,#60a5fa);
+  transition: width 1s ease-in-out;
+}
+
+/* FADE-IN ANIMATION */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 1s ease forwards; }
+
+/* HEADER TEXT GLOW */
+.hero-text-glow {
+  text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 30px #3b82f6;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.5); border-radius: 10px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
 </style>
 </head>
-<body>
-<header>
-<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Truck in Snow Icon" />
-<h1 id="vtcName">Iron Viking Transport</h1>
-<p id="vtcDesc">Professional Viking virtual trucking company</p>
-<br />
-<a id="discordLink" href="https://discord.gg/YOURDISCORD" target="_blank"><button class="btn">Join our Discord</button></a>
+<body class="text-white bg-gray-900">
+
+<!-- HERO SECTION -->
+<header class="hero-bg h-screen flex flex-col justify-center items-center text-center px-6">
+  <div class="relative z-10 flex flex-col items-center">
+    <!-- Logo -->
+    <img src="logo.png" alt="Iron Viking Transport Logo" class="w-48 md:w-64 mb-6 drop-shadow-2xl fade-in">
+    <h1 class="text-5xl md:text-7xl font-oswald font-bold fade-in hero-text-glow">Iron Viking Transport</h1>
+    <p class="mt-4 text-xl md:text-2xl opacity-90 fade-in">Professional Viking Virtual Trucking Company</p>
+    <a href="https://discord.gg/ZFdjKcyt" target="_blank">
+      <button class="btn mt-8 fade-in">Join our Discord</button>
+    </a>
+  </div>
 </header>
-<main>
-<div class="card">
-<h2>🏆 Top Drivers Leaderboard</h2>
-<table>
-<thead><tr><th>#</th><th>Driver Name</th><th>Distance (km)</th><th>Rank</th></tr></thead>
-<tbody id="leaderboard"></tbody>
-</table>
-</div>
 
-<div class="card">
-<h2>🚚 Active Jobs</h2>
-<table>
-<thead><tr><th>Driver</th><th>Cargo</th><th>Route</th><th>Progress</th></tr></thead>
-<tbody id="jobTable"></tbody>
-</table>
-</div>
+<!-- MAIN CONTENT -->
+<main class="max-w-7xl mx-auto p-6 grid gap-8 md:grid-cols-2 -mt-24">
 
-<div class="card">
-<h2>📝 Join Iron Viking Transport</h2>
-<p>Apply to become part of our Viking crew.</p>
-<input id="appName" placeholder="Your TruckersMP Name" />
-<input id="appAge" type="number" placeholder="Your Age" />
-<input id="appExperience" placeholder="Driving Experience" />
-<button class="btn" onclick="submitApplication()">Submit Application</button>
-<p id="appStatus" style="color:var(--accent);"></p>
-</div>
-<section id="join">
-  <h2>Join Iron Viking Transport</h2>
+  <!-- LEADERBOARD -->
+  <div class="glass p-6 fade-in">
+    <h2 class="text-3xl font-oswald font-bold mb-4 text-center text-blue-400">🏆 Top Drivers Leaderboard</h2>
+    <table class="w-full text-left border-separate border-spacing-y-2 text-white">
+      <thead>
+        <tr class="text-blue-400">
+          <th>#</th>
+          <th>Driver</th>
+          <th>Distance (km)</th>
+          <th>Rank</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard"></tbody>
+    </table>
+  </div>
 
-  <p>
-    All applications are handled through our Discord server.
-    Please join Discord and submit your application using the format provided.
-  </p>
+  <!-- ACTIVE JOBS -->
+  <div class="glass p-6 fade-in">
+    <h2 class="text-3xl font-oswald font-bold mb-4 text-center text-blue-400">🚚 Active Jobs</h2>
+    <table class="w-full text-left border-separate border-spacing-y-2 text-white">
+      <thead>
+        <tr class="text-blue-400">
+          <th>Driver</th>
+          <th>Cargo</th>
+          <th>Route</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody id="jobTable"></tbody>
+    </table>
+  </div>
 
-  <a href="https://discord.gg/ZFdjKcyt" class="btn">
-    Apply via Discord
-  </a>
+  <!-- APPLY FORM -->
+  <div class="glass p-6 fade-in">
+    <h2 class="text-3xl font-oswald font-bold mb-4 text-center text-blue-400">📝 Apply</h2>
+    <input id="appName" placeholder="TruckersMP Name" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="appAge" placeholder="Age" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="appExperience" placeholder="Experience" class="w-full p-3 rounded-lg mb-3 text-black">
+    <button class="btn w-full" onclick="submitApplication()">Submit</button>
+    <p id="appStatus" class="mt-3 text-center text-gray-200"></p>
+  </div>
 
-  <p style="margin-top:15px; font-size:0.9em; opacity:0.8;">
-    Final approval is done on TruckersMP.
-  </p>
-</section>
+  <!-- ADMIN LOGIN -->
+  <div class="glass p-6 fade-in">
+    <h2 class="text-3xl font-oswald font-bold mb-4 text-center text-blue-400">🔐 Admin Login</h2>
+    <input type="password" id="adminCode" placeholder="Admin code" class="w-full p-3 rounded-lg mb-3 text-black">
+    <button class="btn w-full" onclick="login()">Login</button>
+  </div>
 
-<div class="card">
-<h2>ℹ️ About Us</h2>
-<p>Iron Viking Transport is a dedicated virtual trucking company in TruckersMP. Our crew is committed to professionalism, teamwork, and exploring the roads of Europe with pride. We value every driver and aim to grow our VTC with skilled and passionate members. Join us to be part of a strong Viking fleet and make every haul legendary!</p>
-</div>
+  <!-- ADMIN PANEL -->
+  <div class="glass p-6 fade-in hidden" id="adminPanel">
+    <h2 class="text-3xl font-oswald font-bold mb-4 text-center text-blue-400">⚙️ Admin Panel</h2>
+    <input id="driverName" placeholder="Driver name" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="driverKm" type="number" placeholder="KM" class="w-full p-3 rounded-lg mb-3 text-black">
+    <button class="btn w-full" onclick="addDriver()">Save Driver</button>
+    <hr class="my-4 border-gray-400">
+    <input id="jobDriver" placeholder="Driver" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="jobCargo" placeholder="Cargo" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="jobRoute" placeholder="Route" class="w-full p-3 rounded-lg mb-3 text-black">
+    <input id="jobProgress" type="number" placeholder="Progress %" class="w-full p-3 rounded-lg mb-3 text-black">
+    <button class="btn w-full" onclick="addJob()">Save Job</button>
+  </div>
 
-<div class="card">
-<h2>🔐 Admin Login</h2>
-<input type="password" id="adminCode" placeholder="Enter admin code" />
-<button class="btn" onclick="login()">Login</button>
-</div>
-
-<div class="card admin-panel" id="adminPanel">
-<h2>⚙️ Admin Panel</h2>
-
-<h3>VTC Info</h3>
-<input id="editName" placeholder="VTC Name" />
-<input id="editDesc" placeholder="VTC Description" />
-<input id="editDiscord" placeholder="Discord Invite Link" />
-<button class="btn" onclick="saveVTC()">Save VTC Info</button>
-<hr />
-
-<h3>Add / Update Driver</h3>
-<input id="driverName" placeholder="Driver Name" />
-<input id="driverKm" type="number" placeholder="Distance (km)" />
-<button class="btn" onclick="addDriver()">Save Driver</button>
-<hr />
-
-<h3>Add / Update Job</h3>
-<input id="jobDriver" placeholder="Driver Name" />
-<input id="jobCargo" placeholder="Cargo" />
-<input id="jobRoute" placeholder="Route" />
-<input id="jobProgress" type="number" placeholder="Progress (%)" />
-<button class="btn" onclick="addJob()">Save Job</button>
-<hr />
-
-<h3>Applications</h3>
-<div id="applications"></div>
-</div>
 </main>
-<footer>© 2026 – Iron Viking Transport | TruckersMP</footer>
+
+<!-- FOOTER -->
+<footer class="bg-black/70 backdrop-blur-xl text-center py-6 text-white text-lg shadow-inner mt-12">
+  © 2026 – Iron Viking Transport | TruckersMP
+</footer>
 
 <script>
-const ADMIN_CODE="Gonkabot1";
-const DISCORD_WEBHOOK="https://discord.com/api/webhooks/1457060077994246389/wQBvtcmuy5V-abrfkgx9IyF6WM44ZZzHipBZ-5ScnsqvmfQen379p3HEPngNbqqVqfUR";
-let drivers=JSON.parse(localStorage.getItem("drivers")||"[]");
-let jobs=JSON.parse(localStorage.getItem("jobs")||"[]");
-let applications=JSON.parse(localStorage.getItem("applications")||"[]");
+// Admin code
+const ADMIN_CODE = "Gonkabot1";
+let drivers = JSON.parse(localStorage.getItem("drivers") || "[]");
+let jobs = JSON.parse(localStorage.getItem("jobs") || "[]");
 
+// Login
+function login(){
+  if(adminCode.value === ADMIN_CODE){
+    document.getElementById("adminPanel").classList.remove("hidden");
+    alert("Admin logged in");
+  } else alert("Wrong admin code");
+}
+
+// Leaderboard
 function renderLeaderboard(){
+  leaderboard.innerHTML = "";
   drivers.sort((a,b)=>b.km-a.km);
-  const tbody=document.getElementById("leaderboard");
-  tbody.innerHTML="";
   drivers.forEach((d,i)=>{
-    let rankName,color;
-    if(d.km>5000){rankName="Viking Elite"; color='red';}
-    else if(d.km>2000){rankName="Veteran"; color='gold';}
-    else if(d.km>500){rankName="Driver"; color='blue';}
-    else {rankName="Recruit"; color='grey';}
-    const icon='🪖';
-    tbody.innerHTML+=`<tr><td>${i+1}</td><td>${icon} <span style='color:${color}'>${d.name}</span></td><td>${d.km}</td><td style='color:${color}'>${rankName}</td></tr>`;
+    let leaderClass = i===0?'leader-1':i===1?'leader-2':i===2?'leader-3':'';
+    leaderboard.innerHTML +=
+      `<tr class="${leaderClass} bg-white/10 rounded-lg">
+        <td>${i+1}</td>
+        <td>${d.name}</td>
+        <td>${d.km}</td>
+        <td>${d.km>5000?"Elite":"Driver"}</td>
+      </tr>`;
   });
   localStorage.setItem("drivers",JSON.stringify(drivers));
 }
 
+// Jobs
 function renderJobs(){
-  const tbody=document.getElementById("jobTable");
-  tbody.innerHTML="";
+  jobTable.innerHTML = "";
   jobs.forEach(j=>{
-    tbody.innerHTML+=`<tr><td>${j.driver}</td><td>${j.cargo}</td><td>${j.route}</td><td><div class='progress-bar'><div class='progress' style='width:${j.progress}%'>${j.progress}%</div></div></td></tr>`;
+    jobTable.innerHTML += `
+    <tr class="bg-white/10 rounded-lg">
+      <td>${j.driver}</td>
+      <td>${j.cargo}</td>
+      <td>${j.route}</td>
+      <td>
+        <div class="progress-bg"><div class="progress-fill" style="width:${j.progress}%">${j.progress}%</div></div>
+      </td>
+    </tr>`;
   });
   localStorage.setItem("jobs",JSON.stringify(jobs));
 }
 
-function renderApplications(){
-  const container=document.getElementById("applications");
-  container.innerHTML="";
-  applications.forEach((app,index)=>{
-    const div=document.createElement("div");
-    div.style.marginBottom="10px";
-    div.innerHTML=`<pre>${app.text}</pre>
-      <div class="app-buttons">
-        <button onclick="acceptApplication(${index})" class="btn">Accept</button>
-        <button onclick="rejectApplication(${index})" class="btn">Reject</button>
-      </div>`;
-    container.appendChild(div);
+// Add Driver
+function addDriver(){
+  const d = drivers.find(x=>x.name===driverName.value);
+  if(d) d.km = Number(driverKm.value);
+  else drivers.push({name:driverName.value,km:Number(driverKm.value)});
+  renderLeaderboard();
+}
+
+// Add Job
+function addJob(){
+  jobs.push({
+    driver: jobDriver.value,
+    cargo: jobCargo.value,
+    route: jobRoute.value,
+    progress: jobProgress.value
   });
-}
-
-function acceptApplication(index){
-  const app=applications[index];
-  if(app){
-    drivers.push({name: app.name, km: 0});
-    applications.splice(index,1);
-    localStorage.setItem("drivers",JSON.stringify(drivers));
-    localStorage.setItem("applications",JSON.stringify(applications));
-    renderLeaderboard();
-    renderApplications();
-    alert(`Accepted ${app.name}`);
-  }
-}
-
-function rejectApplication(index){
-  const app=applications[index];
-  if(app){
-    applications.splice(index,1);
-    localStorage.setItem("applications",JSON.stringify(applications));
-    renderApplications();
-    alert(`Rejected ${app.name}`);
-  }
-}
-
-function login(){ 
-  const code=document.getElementById("adminCode").value; 
-  if(code===ADMIN_CODE){ 
-    document.getElementById("adminPanel").style.display="grid"; 
-    alert("Admin logged in"); 
-  } else alert("Wrong admin code"); 
-}
-
-function addDriver(){ 
-  const name=document.getElementById("driverName").value; 
-  const km=Number(document.getElementById("driverKm").value); 
-  if(!name||isNaN(km))return alert("Fill all fields"); 
-  const existing=drivers.find(d=>d.name===name); 
-  if(existing)existing.km=km; else drivers.push({name,km}); 
-  renderLeaderboard(); 
-}
-
-function addJob(){ 
-  const driver=document.getElementById("jobDriver").value;
-  const cargo=document.getElementById("jobCargo").value;
-  const route=document.getElementById("jobRoute").value;
-  const progress=Number(document.getElementById("jobProgress").value);
-  if(!driver||!cargo||!route||isNaN(progress)) return alert("Fill all fields");
-  const existing=jobs.find(j=>j.driver===driver && j.route===route);
-  if(existing){existing.cargo=cargo; existing.progress=progress;}
-  else jobs.push({driver,cargo,route,progress});
   renderJobs();
 }
 
-function saveVTC(){ 
-  const name=document.getElementById("editName").value; 
-  const desc=document.getElementById("editDesc").value; 
-  const discord=document.getElementById("editDiscord").value; 
-  if(name)localStorage.setItem("vtcName",name); 
-  if(desc)localStorage.setItem("vtcDesc",desc); 
-  if(discord)localStorage.setItem("vtcDiscord",discord); 
-  loadVTC(); 
-  alert("Saved"); 
+// Submit Application
+function submitApplication(){
+  appStatus.innerText = "Application sent!";
 }
 
-function loadVTC(){ 
-  document.getElementById("vtcName").innerText=localStorage.getItem("vtcName")||"Iron Viking Transport"; 
-  document.getElementById("vtcDesc").innerText=localStorage.getItem("vtcDesc")||"Professional Viking virtual trucking company"; 
-  const d=localStorage.getItem("vtcDiscord"); 
-  if(d)document.getElementById("discordLink").href=d; 
-}
-
-async function submitApplication(){ 
-  const name=document.getElementById("appName").value; 
-  const age=document.getElementById("appAge").value; 
-  const exp=document.getElementById("appExperience").value; 
-  if(!name||!age||!exp)return alert("Fill all fields"); 
-  const text=`Name: ${name}\nAge: ${age}\nExperience: ${exp}`;
-  applications.push({name,text});
-  localStorage.setItem("applications",JSON.stringify(applications));
-  renderApplications();
-  document.getElementById("appStatus").innerText="Application sent! Check Discord.";
-  
-  try{ 
-    await fetch(DISCORD_WEBHOOK,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({content:`**New VTC Application**\n${text}`})
-    }); 
-  }catch(e){console.error('Discord webhook error',e);} 
-}
-
-loadVTC(); 
-renderLeaderboard(); 
-renderJobs(); 
-renderApplications();
+// Initial render
+renderLeaderboard();
+renderJobs();
 </script>
 </body>
 </html>
